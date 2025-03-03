@@ -24,8 +24,6 @@ fetchRecipesInfoByID(recipeId);
 
 const recipeContainer = document.getElementById("recipe-container");
 
-
-
 function createRecipeCard(recipe) {
   const card = document.createElement("div");
   card.classList.add("recipe-card");
@@ -111,3 +109,73 @@ function createRecipeCard(recipe) {
   // Append the card to the container
   recipeContainer.appendChild(card);
 }
+
+// Related Vidio
+
+const relatedvidio = document.getElementById("related-container");
+
+const relatedVideo = (id) => {
+  const pr = fetch(
+    `https://api.spoonacular.com/recipes/${recipeId}/similar?apiKey=${apiKey}`
+  );
+
+  pr.then((res) => {
+    const pr1 = res.json();
+    pr1.then((data) => {
+      console.log(data);
+      showData(data);
+    });
+  });
+};
+
+const main = document.getElementById("related-container");
+relatedVideo("recipeId");
+
+// Display recipes
+const showData = (data) => {
+  main.innerHTML = ""; // Clear previous results
+  data.forEach((ele) => {
+    const div = document.createElement("div");
+    div.classList.add("recipe");
+
+    // Recipe Image
+    const image = document.createElement("img");
+    image.src = `https://spoonacular.com/recipeImages/${ele.image}`; // Correct image URL
+    image.alt = ele.title;
+    image.classList.add("img");
+    div.appendChild(image);
+
+    // Recipe Title
+    const title = document.createElement("p");
+    title.textContent = ele.title;
+    div.appendChild(title);
+
+    // Cooking Time
+    const time = document.createElement("p");
+    time.textContent = `${ele.readyInMinutes} minutes`;
+    div.appendChild(time);
+
+    // More Details Button
+    const moreDetailsButton = document.createElement("button");
+    moreDetailsButton.innerText = "More Details";
+    moreDetailsButton.classList.add("details-button");
+    moreDetailsButton.addEventListener("click", (event) => {
+      event.stopPropagation(); // Prevent the card click event from firing
+      window.open(`./MoreInfo.html?id=${ele.id}`, "_top");
+    });
+    div.appendChild(moreDetailsButton);
+
+    // Save Button
+    const saveButton = document.createElement("button");
+    saveButton.innerText = "Add to Favorites";
+    saveButton.classList.add("save-button");
+    saveButton.addEventListener("click", (event) => {
+      event.stopPropagation(); // Prevent the card click event from firing
+      saveRecipe(ele); // Call the saveRecipe function
+    });
+    div.appendChild(saveButton);
+
+    // Append the card to the container
+    main.appendChild(div);
+  });
+};

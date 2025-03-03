@@ -52,7 +52,7 @@ const showData = (data) => {
 
     // Save Button
     const saveButton = document.createElement("button");
-    saveButton.innerText = "Save";
+    saveButton.innerText = "Add to Favorites";
     saveButton.classList.add("save-button");
     saveButton.addEventListener("click", (event) => {
       event.stopPropagation(); // Prevent the card click event from firing
@@ -137,3 +137,11 @@ document
 
 // Fetch all recipes on page load
 fetchAllRecipes();
+
+//Generate Random Recipe
+
+document
+  .getElementById("random-recipe-button")
+  .addEventListener("click", () => {
+    window.open("./GenerateRandomRecipe.html", "_top");
+  });

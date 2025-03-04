@@ -60,6 +60,49 @@ const showData = (data) => {
     });
     div.appendChild(saveButton);
 
+    const shareButtons = document.createElement("div");
+    shareButtons.classList.add("share-buttons");
+
+    // Facebook Share Button
+    const facebookButton = document.createElement("a");
+    facebookButton.href = `https://www.facebook.com/sharer/sharer.php?u=${generateRecipeUrl(
+      ele.id
+    )}`;
+    facebookButton.target = "_blank";
+    facebookButton.classList.add("share-button", "facebook");
+    facebookButton.innerHTML = `
+      <img src="https://img.icons8.com/color/48/000000/facebook.png" alt="Facebook" />
+      
+    `;
+    shareButtons.appendChild(facebookButton);
+
+    // Twitter Share Button
+    const twitterButton = document.createElement("a");
+    twitterButton.href = `https://twitter.com/intent/tweet?url=${generateRecipeUrl(
+      ele.id
+    )}&text=${encodeURIComponent(`Check out this recipe: ${ele.title}`)}`;
+    twitterButton.target = "_blank";
+    twitterButton.classList.add("share-button", "twitter");
+    twitterButton.innerHTML = `
+      <img src="https://img.icons8.com/color/48/000000/twitter.png" alt="Twitter" />
+      
+    `;
+    shareButtons.appendChild(twitterButton);
+
+    // Copy Link Button
+    const copyLinkButton = document.createElement("button");
+    copyLinkButton.classList.add("share-button", "copy-link");
+    copyLinkButton.innerHTML = `
+      <img src="https://img.icons8.com/color/48/000000/copy-link.png" alt="Copy Link" />
+      Copy Link
+    `;
+    copyLinkButton.addEventListener("click", () => {
+      copyRecipeLink(generateRecipeUrl(ele.id));
+    });
+    shareButtons.appendChild(copyLinkButton);
+
+    div.appendChild(shareButtons);
+
     // Append the card to the container
     main.appendChild(div);
   });
@@ -98,6 +141,42 @@ const fetchAllRecipes = () => {
     })
     .catch((error) => {
       console.error("Error fetching recipes:", error);
+    });
+};
+const generateRecipeUrl = (recipeId) => {
+  const baseUrl = window.location.origin; // Get the current website URL
+  return `${baseUrl}/recipe?id=${recipeId}`;
+};
+
+const updateShareButtons = (recipeId, recipeTitle) => {
+  const recipeUrl = generateRecipeUrl(recipeId);
+
+  // Update Facebook Share Button
+  const facebookButton = document.querySelector(".share-button.facebook");
+  facebookButton.href = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
+    recipeUrl
+  )}`;
+
+  // Update Twitter Share Button
+  const twitterButton = document.querySelector(".share-button.twitter");
+  twitterButton.href = `https://twitter.com/intent/tweet?url=${encodeURIComponent(
+    recipeUrl
+  )}&text=${encodeURIComponent(`Check out this recipe: ${recipeTitle}`)}`;
+
+  // Update Copy Link Button
+  const copyLinkButton = document.querySelector(".share-button.copy-link");
+  copyLinkButton.setAttribute("onclick", `copyRecipeLink('${recipeUrl}')`);
+};
+
+const copyRecipeLink = (recipeUrl) => {
+  navigator.clipboard
+    .writeText(recipeUrl)
+    .then(() => {
+      alert("Link copied to clipboard!");
+    })
+    .catch((error) => {
+      console.error("Failed to copy link:", error);
+      alert("Failed to copy link. Please try again.");
     });
 };
 
